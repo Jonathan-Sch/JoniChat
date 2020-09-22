@@ -2,9 +2,62 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<title>Joni_Chat</title>
+
+<style>
+aside{
+
+position: fixed;
+background-color: grey;
+width:150px;
+height: 100%;
+
+}
+
+aside button{
+
+background-color:Brown;
+position:absolute;
+left:20px;
+top: 40px;
+}
+
+
+main{
+position:relative;
+background-color: BurlyWood;
+margin-left: 150px;
+height: 600px;
+text-align: center;
+}
+
+header{
+
+background-color: rgb(229,109,69);
+text-align: center;
+height: 90px;
+
+}
+
+
+</style>
+
 </head>
 <body>
+<header id="titlescreen">Joni's Chatparadies
+</header>
+<aside id="navbar">Page-Controls
+</aside>
+<main id="mainpage">Main Content 
+</main>
 
 </body>
+
+<script>
+
+var showMessages =$('<button type="button" id="showUser" onclick="loadMessage()">Show Messages</button>');
+$("aside").append(showMessages);
+
+</script>
 </html>
