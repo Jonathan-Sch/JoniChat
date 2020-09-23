@@ -3,6 +3,7 @@
 <head>
 <meta charset="ISO-8859-1">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <title>Joni_Chat</title>
 
 <style>
@@ -22,6 +23,8 @@ position:absolute;
 left:20px;
 top: 40px;
 }
+
+
 
 
 main{
@@ -57,7 +60,26 @@ height: 90px;
 <script>
 
 var showMessages =$('<button type="button" id="showUser" onclick="loadMessage()">Show Messages</button>');
+$(showMessages).addClass("btn btn-primary");
 $("aside").append(showMessages);
+
+
+var sendMessages =$('<button type="button" id="sendMessage" onclick="sendMessage()">Send Messages</button>');
+$(sendMessages).css('top', '80px');
+$("aside").append(sendMessages);
+
+
+function loadMessage(){
+	
+	
+	
+}
+
+function sendMessage(){
+	
+	
+	
+}
 
 </script>
 </html>
