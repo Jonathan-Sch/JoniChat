@@ -2,84 +2,189 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <title>Joni_Chat</title>
 
 <style>
-aside{
-
-position: fixed;
-background-color: grey;
-width:150px;
-height: 100%;
-
+aside {
+	position: fixed;
+	background-color: grey;
+	width: 150px;
+	height: 100%;
 }
 
-aside button{
-
-background-color:Brown;
-position:absolute;
-left:20px;
-top: 40px;
+aside button {
+	background-color: Brown;
+	position: absolute;
+	left: 20px;
+	top: 40px;
 }
 
-
-
-
-main{
-position:relative;
-background-color: BurlyWood;
-margin-left: 150px;
-height: 600px;
-text-align: center;
+main {
+	position: relative;
+	background-color: BurlyWood;
+	margin-left: 150px;
+	height: 600px;
+	text-align: center;
 }
 
-header{
-
-background-color: rgb(229,109,69);
-text-align: center;
-height: 90px;
-
+header {
+	background-color: rgb(229, 109, 69);
+	text-align: center;
+	height: 90px;
 }
 
+.users {
+	position: absolute;
+	background-color: lightgrey;
+	width: 140px;
+	height: 40px;
+	border: solid;
+	left: 47%;
+	margin: 10px;
+	font: 15px Arial, sans-serif;
+}
 
+.message {
+	position: absolute;
+	background-color: lightgrey;
+	width: 400px;
+	height: 50px;
+	border: solid;
+	left: 40%;
+	margin: 15px;
+	font: 15px Arial, sans-serif;
+}
 </style>
 
 </head>
 <body>
-<header id="titlescreen">Joni's Chatparadies
-</header>
-<aside id="navbar">Page-Controls
-</aside>
-<main id="mainpage">Main Content 
-</main>
+	<header id="titlescreen">Joni's Chatparadies </header>
+	<aside id="navbar">Page-Controls</aside>
+	<main id="mainpage">Main Content</main>
 
 </body>
 
 <script>
+	var showMessages = $('<button type="button" id="showUser" onclick="loadMessage()">Show Messages</button>');
+	$(showMessages).addClass("btn btn-primary");
+	$("aside").append(showMessages);
 
-var showMessages =$('<button type="button" id="showUser" onclick="loadMessage()">Show Messages</button>');
-$(showMessages).addClass("btn btn-primary");
-$("aside").append(showMessages);
+	var sendMessages = $('<button type="button" id="sendMessage" onclick="sendMessage()">Send Messages</button>');
+	$(sendMessages).css('top', '80px');
+	$(sendMessages).addClass("btn btn-primary");
+	$("aside").append(sendMessages);
 
+	function loadMessage() {
+		var top = 20;
 
-var sendMessages =$('<button type="button" id="sendMessage" onclick="sendMessage()">Send Messages</button>');
-$(sendMessages).css('top', '80px');
-$("aside").append(sendMessages);
+		document.getElementById("mainpage").innerHTML = "";
 
+		var testUser = "Testperson1";
+		$
+				.ajax({
+					url : "http://localhost:3000/user/" + testUser,
+					method : "GET",
+					success : function(data, status) {
+						var contactedUsers = data;
+						console.log(contactedUsers)
+						for (var i = 0; i < contactedUsers.length; i++) {
+							var contactedUserUi = $('<div id="'+contactedUsers[i]+'" class="users" >'
+									+ contactedUsers[i] + '</div>');
+							$(contactedUserUi).css('top', "" + top + "px");
+							$("main").append(contactedUserUi);
 
-function loadMessage(){
-	
-	
-	
-}
+							document
+									.getElementById("" + contactedUsers[i] + "")
+									.setAttribute(
+											"onclick",
+											'showContact("' + testUser + '",'
+													+ '"' + contactedUsers[i]
+													+ '")');
 
-function sendMessage(){
-	
-	
-	
-}
+							top = top + 60;
+						}
+					}
+				})
 
+	}
+
+	function sendMessage() {
+		var top = 20;
+		var currentUser = "";
+		console.log("" + top + "");
+
+		document.getElementById("mainpage").innerHTML = "";
+
+		$.ajax({
+			url : "http://localhost:3000/user",
+			method : "GET",
+			success : function(data, status) {
+				var user = data;
+				console.log(user)
+
+				for (var i = 0; i < user.length; i++) {
+					console.log(user[i])
+					var userUi = $('<div id="'+user[i]+'" class="users" >'
+							+ user[i] + '</div>');
+					$(userUi).css('top', "" + top + "px");
+					$("main").append(userUi);
+					document.getElementById("" + user[i] + "").setAttribute(
+							"onclick", 'newMessage("' + user[i] + '")');
+
+					top = top + 60;
+				}
+			}
+		});
+
+	}
+	function newMessage(user) {
+		console.log("" + user + "");
+	}
+
+	function showContact(currentUser, selectedUser) {
+		console.log(currentUser + "  " + selectedUser);
+
+		document.getElementById("mainpage").innerHTML = "";
+
+		var top = 20;
+
+		var num = 1;
+		$.ajax({
+			url : "http://localhost:3000/user/" + currentUser + "/"
+					+ selectedUser,
+			method : "GET",
+			success : function(data, status) {
+				var messages = data;
+				console.log(messages);
+				for (var i = 0; i < messages.length; i++) {
+
+					var keys = Object.keys(messages[i]);
+console.log(keys);
+					for (var j = 0; j < keys.length; j++) {
+						var messageName = Object.keys(messages[i][keys[j]]);
+
+						var currentMessage = messageName[0];
+						var message = $('<div class="message">'
+								+ messages[i][keys[j]][currentMessage]
+								+ '</div>')
+								
+								
+						$(message).css('top', "" + top + "px");
+						$("main").append(message);
+						top = top + 60;
+
+						num++;
+					}
+
+				}
+			}
+
+		})
+
+	}
 </script>
 </html>
