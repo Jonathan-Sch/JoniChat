@@ -122,15 +122,19 @@ header {
 				console.log(user)
 
 				for (var i = 0; i < user.length; i++) {
-					console.log(user[i])
-					var userUi = $('<div id="'+user[i]+'" class="users" >'
-							+ user[i] + '</div>');
+			
+					var allUsers = user[i].toString().split(",");
+					
+					for(var j = 0; j < allUsers.length; j++){
+					var userUi = $('<div id="'+allUsers[j]+'" class="users" >'
+							+ allUsers[j] + '</div>');
 					$(userUi).css('top', "" + top + "px");
 					$("main").append(userUi);
-					document.getElementById("" + user[i] + "").setAttribute(
-							"onclick", 'newMessage("' + user[i] + '")');
+					document.getElementById("" + allUsers[j] + "").setAttribute(
+							"onclick", 'newMessage("' + allUsers[j] + '")');
 
 					top = top + 60;
+					}
 				}
 			}
 		});
