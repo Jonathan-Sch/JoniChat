@@ -8,15 +8,82 @@ app.use(cors());
 
 var userData = [{
 
-	"name":"Testperson1",
-	"chats":[{"chatpartner":"Elisa", "messages":[{"message1": "First Testmessage"}, {"message2":"Second Testmessage"}]},
-		{"chatpartner":"Johan", "messages":[{"message1": "First Lorem"}, {"message2":"Second Lorem"}]}]},
+	"Testperson1":{
+		"name":"Testperson1",
+		"created": new Date(),
+		"chats":{
+			"Elisa" : [{
+				"messagetitle":"message1",
+				"content":"First Testmessage",
+				"wasread":true,
+				"date": new Date()
+			},
+             {
+				"messagetitle":"message2",
+				"content":"Second Testmessage",
+				"wasread":true,
+				"date": new Date()
+				}
+			
+			],
+			"Johan" : [{
+				"messagetitle":"message1",
+				"content":"First Lorem",
+				"wasread":true,
+				"date": new Date()
+			},
+             {
+				"messagetitle":"message2",
+				"content":"Second Lorem",
+				"wasread":true,
+				"date": new Date()
+				}
+			
+			]
+		}
+	},
+	"Testperson2":{
+		"name":"Testperson2",
+		"created": new Date(),
+		"chats":{
+			"Michael" : [{
+				"messagetitle":"message1",
+				"content":"First Text",
+				"wasread":true,
+				"date": new Date()
+			},
+             {
+				"messagetitle":"message2",
+				"content":"Second Text",
+				"wasread":true,
+				"date": new Date()
+				}
+			
+			],
+			"Ludolf" : [{
+				"messagetitle":"message1",
+				"content":"First Lorem Ipsum dolor",
+				"wasread":true,
+				"date": new Date()
+			},
+             {
+				"messagetitle":"message2",
+				"content":"Second Lorem Ipsum dolor",
+				"wasread":true,
+				"date": new Date()
+				}
+			
+			],
+			"Elisa" : [{
+				"messagetitle":"message1",
+				"content":"First Testperson2 text",
+				"wasread":true,
+				"date": new Date()
+		}]
 		
+		}
+	}
 		
-		{"name":"Testperson2",
-		"chats":[{"chatpartner":"Michael", "messages":[{"message1": "First Text"}, {"message2":"Second Text"}]},
-			{"chatpartner":"Ludolf", "messages":[{"message1": "First Lorem Ipsum dolor"}, {"message2":"Second Lorem Ipsum dolor"}]},
-			{"chatpartner":"Elisa", "messages":[{"message1": "First Testperson2 text"}]}]
 	
 	
 }]
@@ -55,15 +122,20 @@ function showMessages(username, searchname){
 	
 	var contactedUsers = [];
 	
+	
+	
 	for(var i = 0; i < userData.length; i++){
-		console.log(userData[i].name);
-		if(userData[i].name == username){
-			for(var j = 0; j <userData[i].chats.length; j++){
-				console.log(userData[i].chats[j].chatpartner);
-				if(userData[i].chats[j].chatpartner == searchname){
-					contactedUsers.push(userData[i].chats[j].messages);
-				}
-		}
+	
+	
+		var Data = userData[i][username];
+
+
+			for(var j = 0; j <Data["chats"][searchname].length; j++){
+		
+				
+					contactedUsers.push(Data["chats"][searchname][j]);
+				
+		
 		
 		}
 	}
@@ -74,11 +146,23 @@ function showMessages(username, searchname){
 function showContactedUsers(username){
 	var messagedUsers = [];
 	for(var i = 0; i < userData.length; i++){
-		if(userData[i].name === username){
-			for(var j = 0; j < userData[i].chats.length; j++){
-				messagedUsers.push(userData[i].chats[j].chatpartner);
-			}
+		
+		var Data = userData[i][username];
+		
+	
+		
+		var names = Object.keys(Data["chats"])
+		console.log(names)
+		
+		for(var j = 0; j < names.length; j++){
+			
+		
+			messagedUsers.push(names[j]);
 		}
+		
+		
+			
+		
 	}
 	return messagedUsers;
 }
@@ -88,10 +172,11 @@ function showAllUsers(){
 var Users = [];
 	
 	for(var i = 0; i < userData.length; i++){
-		console.log(userData[i].name);
+		console.log(userData[i]);
 		
-			
-				Users.push(userData[i].name);
+			var createdUser = (Object.keys(userData[i]))
+			console.log(createdUser)
+			Users.push(createdUser);
 			
 		
 	}

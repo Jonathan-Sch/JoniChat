@@ -52,11 +52,12 @@ header {
 	position: absolute;
 	background-color: lightgrey;
 	width: 400px;
-	height: 50px;
+	height: 80px;
 	border: solid;
 	left: 40%;
 	margin: 15px;
 	font: 15px Arial, sans-serif;
+	
 }
 </style>
 
@@ -97,13 +98,7 @@ header {
 							$(contactedUserUi).css('top', "" + top + "px");
 							$("main").append(contactedUserUi);
 
-							document
-									.getElementById("" + contactedUsers[i] + "")
-									.setAttribute(
-											"onclick",
-											'showContact("' + testUser + '",'
-													+ '"' + contactedUsers[i]
-													+ '")');
+							document.getElementById("" + contactedUsers[i] + "").setAttribute("onclick",'showContact("' + testUser + '",'+ '"' + contactedUsers[i]+ '")');
 
 							top = top + 60;
 						}
@@ -162,25 +157,19 @@ header {
 				console.log(messages);
 				for (var i = 0; i < messages.length; i++) {
 
-					var keys = Object.keys(messages[i]);
-console.log(keys);
-					for (var j = 0; j < keys.length; j++) {
-						var messageName = Object.keys(messages[i][keys[j]]);
+console.log(messages[i]["content"])
 
-						var currentMessage = messageName[0];
-						var message = $('<div class="message">'
-								+ messages[i][keys[j]][currentMessage]
-								+ '</div>')
-								
+						var message = $('<span class="message"<div>Titel der Nachricht: '+messages[i]["messagetitle"]+'</div><div>Inhalt der Nachricht: '+messages[i]["content"]+'</div><div>Erstellt am: '+messages[i]["date"]+'</div></span>');
+								//message += $('<div id="content">'+messages[i]["content"]+'</div></span>');
 								
 						$(message).css('top', "" + top + "px");
 						$("main").append(message);
-						top = top + 60;
+						top = top + 100;
 
 						num++;
 					}
 
-				}
+				
 			}
 
 		})
