@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
+<meta charset="UTF-8">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <link rel="stylesheet"
@@ -59,6 +59,35 @@ header {
 	font: 15px Arial, sans-serif;
 	
 }
+
+.loginUI {
+	position: absolute;
+	background-color: lightgrey;
+	width: 400px;
+	height: 80px;
+	border: solid;
+	left: 40%;
+	margin: 15px;
+	font: 15px Arial, sans-serif;
+	
+}
+
+#newMessage{
+position: absolute;
+	background-color: lightgrey;
+	width: 500px;
+	height: 380px;
+	
+	left: 40%;
+	margin: 15px;
+
+}
+
+#sendMessageButton{
+margin:10px;
+
+}
+
 </style>
 
 </head>
@@ -70,24 +99,54 @@ header {
 </body>
 
 <script>
-	var showMessages = $('<button type="button" id="showUser" onclick="loadMessage()">Show Messages</button>');
-	$(showMessages).addClass("btn btn-primary");
-	$("aside").append(showMessages);
 
-	var sendMessages = $('<button type="button" id="sendMessage" onclick="sendMessage()">Send Messages</button>');
+$(document).ready(function(){
+	login();
+})
+
+function login(){
+	
+	document.getElementById("mainpage").innerHTML = "";
+	
+	var login = ('<form class="loginUI"><input type="text" class="form-control" id="login" placeholder="Nutzername"></input>')
+	login += ('<button type="button" id="loginButton" class="btn btn-primary">Login</button></form>')
+	
+	
+	$("main").append(login)
+	
+
+	document.getElementById("loginButton").setAttribute("onclick", 'userArea()')
+	
+}
+function userArea(){
+	currentUser = $("#login").val()
+	console.log("neuer currentUser: "+currentUser)
+	document.getElementById("mainpage").innerHTML = "";
+	
+console.log("userArea current User: "+currentUser)
+	var showMessages = $('<button type="button" id="showUser" >Show Messages</button>');
+	$(showMessages).addClass("btn btn-primary");
+	
+	$("aside").append(showMessages);
+	document.getElementById("showUser").setAttribute("onclick", 'loadMessage("'+currentUser+'")')
+
+	var sendMessages = $('<button type="button" id="sendMessage">Send Messages</button>');
 	$(sendMessages).css('top', '80px');
+
 	$(sendMessages).addClass("btn btn-primary");
 	$("aside").append(sendMessages);
+	document.getElementById("sendMessage").setAttribute("onclick", 'showReceiver("'+currentUser+'")')
 
-	function loadMessage() {
+}
+	function loadMessage(currentUser) {
 		var top = 20;
 
 		document.getElementById("mainpage").innerHTML = "";
 
-		var testUser = "Testperson1";
+		//var testUser = "Testperson1";
 		$
 				.ajax({
-					url : "http://localhost:3000/user/" + testUser,
+					url : "http://localhost:3000/user/" + currentUser,
 					method : "GET",
 					success : function(data, status) {
 						var contactedUsers = data;
@@ -98,7 +157,7 @@ header {
 							$(contactedUserUi).css('top', "" + top + "px");
 							$("main").append(contactedUserUi);
 
-							document.getElementById("" + contactedUsers[i] + "").setAttribute("onclick",'showContact("' + testUser + '",'+ '"' + contactedUsers[i]+ '")');
+							document.getElementById("" + contactedUsers[i] + "").setAttribute("onclick",'showContact("' + currentUser + '",'+ '"' + contactedUsers[i]+ '")');
 
 							top = top + 60;
 						}
@@ -107,9 +166,9 @@ header {
 
 	}
 
-	function sendMessage() {
+	function showReceiver(currentUser) {
 		var top = 20;
-		var currentUser = "";
+		console.log("current User: "+currentUser)
 		console.log("" + top + "");
 
 		document.getElementById("mainpage").innerHTML = "";
@@ -124,6 +183,7 @@ header {
 				for (var i = 0; i < user.length; i++) {
 			
 					var allUsers = user[i].toString().split(",");
+					console.log(allUsers)
 					
 					for(var j = 0; j < allUsers.length; j++){
 					var userUi = $('<div id="'+allUsers[j]+'" class="users" >'
@@ -131,7 +191,8 @@ header {
 					$(userUi).css('top', "" + top + "px");
 					$("main").append(userUi);
 					document.getElementById("" + allUsers[j] + "").setAttribute(
-							"onclick", 'newMessage("' + allUsers[j] + '")');
+//------>
+				"onclick", 'newMessage("'+currentUser+'",'+'"' + allUsers[j] + '")');
 
 					top = top + 60;
 					}
@@ -140,9 +201,65 @@ header {
 		});
 
 	}
-	function newMessage(user) {
-		console.log("" + user + "");
+	function newMessage(currentUser, receiver) {
+		
+		document.getElementById("mainpage").innerHTML = "";
+		
+		var messageForm = ('<form id="newMessage" class="form-group"><input type="text" id="messageReceiver" class="form-control" placeholder="Empfänger der Nachricht" disabled></input>')
+		messageForm +=('<input type="text" id="title" placeholder="Title" class="form-control"></input>');
+		messageForm += ('<input type="text" id="creationDate" class="form-control" placeholder="Date" disabled></input>' )
+		messageForm += ('<textarea rows="14" id="content" class="form-control" placeholder="Content"></textarea> ')
+		messageForm += ('<button type="button" id="sendMessageButton" class="btn btn-primary">Nachricht abschicken</button></form>')
+		
+		
+	
+		$("main").append(messageForm)
+		
+		document.getElementById("sendMessageButton").setAttribute("onclick", 'sendMessage("'+currentUser+'")');
+		
+		$("#messageReceiver").val(receiver);
+	
+		$("#creationDate").val(new Date());
+		
+		console.log("" +  receiver + "");
 	}
+	
+	
+	function sendMessage(user){
+		
+		console.log("message absender "+user);
+		
+		var messageTitle = $("#title").val();
+		var messageReceiver = $("#messageReceiver").val();
+		var creationDate = $("#creationDate").val();
+		var content = $("#content").val();
+		
+		var message = {
+				"messagetitle": messageTitle,
+				"content": content,
+				"wasread": false,
+				"date": creationDate
+		}
+		
+	
+		$.ajax({
+			
+			url:"http://localhost:3000/message/"+user+"/"+messageReceiver,
+			method:"POST",
+			success: function(data, status){
+				console.log("Message erfolgreich abgeschickt");
+				
+			},
+			contentType:"application/json",
+			dataType:"json",
+			data:JSON.stringify(message)
+			
+
+		})
+		
+	}
+	
+	
 
 	function showContact(currentUser, selectedUser) {
 		console.log(currentUser + "  " + selectedUser);

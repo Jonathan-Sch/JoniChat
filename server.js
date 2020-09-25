@@ -115,6 +115,34 @@ app.get("/user", function(req,res){
 	
 })
 
+app.post("/message/:absender/:empfaenger", function(req, res){
+
+	var absender = req.params.absender;
+	var receiver = req.params.empfaenger;
+	var message = req.body;
+	
+	postNewMessage(absender, receiver, message);
+	res.status(200).send("Message successfully posted!")
+	
+	
+})
+
+
+function postNewMessage(absender, receiver, message){
+	
+	
+	if(userData[0][receiver]["chats"][absender] == undefined){
+		userData[0][receiver]["chats"][absender] = []
+	}
+	
+	userData[0][receiver]["chats"][absender].push(message);
+	
+	console.log("Absender: "+absender)
+	console.log("Empfänger: "+receiver),
+	console.log(message);
+}
+
+
 
 function showMessages(username, searchname){
 	
