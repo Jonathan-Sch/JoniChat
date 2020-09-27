@@ -100,6 +100,17 @@ res.status(200).send(selectedusers);
 
 });
 
+app.get("/user/:name/:searchname/:messageTitle", function(req, res){
+	var username = req.params.name;
+	var searchname = req.params.searchname;
+	var messageTitle = req.params.messageTitle;
+	console.log("Server MessageTitle: "+messageTitle)
+	var selectedusers = showSingleMessage(username, searchname, messageTitle);
+res.contentType = "application/json";
+res.status(200).send(selectedusers);
+
+});
+
 app.get("/user/:name", function(req, res){
 	var currentUser = req.params.name;
 	var messagedUsers = (showContactedUsers(currentUser));
@@ -129,6 +140,19 @@ app.post("/message/:absender/:empfaenger", function(req, res){
 	
 })
 
+app.put("/user/:name/:searchname/:messageTitle", function(req, res){
+	var newMessage = req.body;
+	var username = req.params.name;
+	var searchname = req.params.searchname;
+	var messageTitle = req.params.messageTitle;
+	console.log("Server MessageTitle modified: "+messageTitle)
+	console.log(req.body+" req.body")
+	var selectedusers = editSingleMessage(username, searchname, messageTitle, newMessage);
+res.contentType = "application/json";
+res.status(200).send(selectedusers);
+
+});
+
 
 function postNewMessage(absender, receiver, message){
 	
@@ -154,6 +178,50 @@ function showMessages(username, searchname){
 	
 	return userData[username]["chats"][searchname];
 }
+
+function showSingleMessage(username, searchname, messageTitle){
+	
+
+
+console.log("object.keys "+ Object.keys(userData[username]["chats"][searchname]))
+console.log(userData[username]["chats"][searchname][0]);
+
+var anzahlMessages = Object.keys(userData[username]["chats"][searchname]);
+for(var i = 0; i < anzahlMessages.length; i++){
+	if(userData[username]["chats"][searchname][i]["messagetitle"] == messageTitle){
+		console.log("user gefunden = "+ userData[username]["chats"][searchname][i])
+		return userData[username]["chats"][searchname][i];
+		
+	}
+}
+
+
+	return null;
+	
+	
+}
+
+function editSingleMessage(username, searchname, messageTitle, newMessage){
+	
+
+
+	console.log("object.keys "+ Object.keys(userData[username]["chats"][searchname]))
+	console.log(userData[username]["chats"][searchname][0]);
+
+	var anzahlMessages = Object.keys(userData[username]["chats"][searchname]);
+	for(var i = 0; i < anzahlMessages.length; i++){
+		if(userData[username]["chats"][searchname][i]["messagetitle"] == messageTitle){
+			console.log("user gefunden = "+ userData[username]["chats"][searchname][i])
+			 userData[username]["chats"][searchname][i] = newMessage;
+			
+		}
+	}
+
+
+		return null;
+		
+		
+	}
 
 
 function showContactedUsers(username){

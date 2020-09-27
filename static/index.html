@@ -73,6 +73,17 @@ header {
 	font: 15px Arial, sans-serif;
 }
 
+.singleMessage {
+	position: absolute;
+	background-color: lightgrey;
+	width: 400px;
+	height: 200px;
+	border: solid;
+	left: 40%;
+	margin: 15px;
+	font: 15px Arial, sans-serif;
+}
+
 .loginUI {
 	
 	background-color: lightgrey;
@@ -363,12 +374,13 @@ var currentTitle = document.getElementById(""+messages[i]["messagetitle"]);
 if(messages[i]["wasread"] === false){
 	$(messageTitle).css("background-color","red");
 	console.log(messages[i])
-	var message = JSON.stringify(messages[i])
+	var message = (messages[i])
 	console.log(message)
-	currentTitle.setAttribute("onclick",'messageRead("'+currentUser+'")');
+	currentTitle.setAttribute("onclick",'messageRead("' + currentUser+ '","'+ selectedUser + '",'+JSON.stringify(message)+',"'+messages[i]["messagetitle"]+'")');
 } else{
+	var message = (messages[i])
 console.log(currentTitle)
-currentTitle.setAttribute("onclick",'showContact("' + currentUser+ '",' + '"'+ selectedUser + '")');
+currentTitle.setAttribute("onclick",'messageRead("' + currentUser+ '","'+ selectedUser + '",'+JSON.stringify(message)+',"'+messages[i]["messagetitle"]+'")');
 							num++;
 						}
 
@@ -379,13 +391,81 @@ currentTitle.setAttribute("onclick",'showContact("' + currentUser+ '",' + '"'+ s
 		
 	}
 	
-	function messageRead( message){
-		//message = JSON.parse(message)
-		console.log(message)
-		//message["wasread"] = true;
+	function messageRead(currentUser, selectedUser, message, messageTitle){
+		
+	
+		
+		console.log(JSON.stringify(message.messagetitle))
+		message.wasread = true;
 		console.log("hat funktioniert")
-		//showContact(currentUser, selectedUser);
+		console.log(message["wasread"])
+		
+		console.log("messagetitle: "+messageTitle)
+		
+		console.log("message "+message)
+		
+			$
+				.ajax({
+					url : "http://localhost:3000/user/" + currentUser + "/"+ selectedUser+"/"+messageTitle,
+					method : "PUT",
+					success : function(data, status) {
+						console.log("Message successfully modified!")
+						
+
+					},
+					contentType:"application/json",
+					dataType:"json",
+					data: JSON.stringify(message)
+					
+
+				})
+		
+		
+		showMessage(currentUser, selectedUser, messageTitle);
 	}
+	
+	function showMessage(currentUser, selectedUser, messageTitle){
+		
+		console.log(currentUser + "  " + selectedUser+" "+messageTitle);
+
+		document.getElementById("mainpage").innerHTML = "";
+
+		var top = 20;
+
+		var num = 1;
+		$
+				.ajax({
+					url : "http://localhost:3000/user/" + currentUser + "/"+ selectedUser+"/"+messageTitle,
+					method : "GET",
+					success : function(data, status) {
+						var message = data;
+						console.log(message);
+						
+
+							console.log(message["content"])
+
+							var message = $('<span class="singleMessage"<div><h1>Titel der Nachricht: '
+									+ message["messagetitle"]
+									+ '</h1></div><div>Inhalt der Nachricht: '
+									+ message["content"]
+									+ '</div><div>Erstellt am: '
+									+ message["date"] + '</div></span>');
+							//message += $('<div id="content">'+messages[i]["content"]+'</div></span>');
+
+							$(message).css('top', "" + top + "px");
+							$("main").append(message);
+							top = top + 100;
+
+							num++;
+						
+
+					}
+
+				})
+		
+	}
+	
+	/*
 
 	function showContact(currentUser, selectedUser) {
 		console.log(currentUser + "  " + selectedUser);
@@ -427,5 +507,7 @@ currentTitle.setAttribute("onclick",'showContact("' + currentUser+ '",' + '"'+ s
 				})
 
 	}
+	
+	*/
 </script>
 </html>
