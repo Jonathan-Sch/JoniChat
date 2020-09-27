@@ -17,6 +17,7 @@ aside {
 	font-family: Impact, Charcoal, sans-serif;
 	text-align: center;
 	font-size: 20px;
+	top: 70px;
 }
 
 aside button {
@@ -25,22 +26,29 @@ aside button {
 	top: 50px;
 }
 
+
+
 main {
+	
+	top: 70px;
 	position: relative;
-	background-color: BurlyWood;
-	margin-left: 150px;
-	height: 1250px;
+	margin-left: 150px; 
+	min-height: calc(100vh - 70px);
 	text-align: center;
+	background-color: BurlyWood;
 }
 
 header {
 	background-color: rgb(229, 109, 69);
 	text-align: center;
 	height: 70px;
-	position: relative;
+	top: 0px;
+	left: 0px;
+	position: fixed;
 	font-family: Impact, Charcoal, sans-serif;
 	font-size: 35px;
-	width: 100%;
+	width: 100vw;
+	z-index:99999;
 }
 
 .users {
@@ -66,13 +74,14 @@ header {
 }
 
 .loginUI {
-	position: absolute;
+	
 	background-color: lightgrey;
 	width: 400px;
 	height: 80px;
 	border: solid;
-	left: 40%;
-	margin: 15px;
+	top: 130px;;
+	left: calc(50% - 200px);
+position:relative;
 	font: 15px Arial, sans-serif;
 }
 
@@ -89,17 +98,30 @@ header {
 	margin: 10px;
 }
 
-#loginButton{
-margin:3px;
-width:150px;
+#loginButton {
+	margin: 3px;
+	width: 150px;
+}
+
+#readCount{
+position:relative;
+left:56%;
+top:10px;
+background-color: lightgrey;
+border:solid;
+width: 180px;
+height:40px;
+font-size:14px;
+
+
 }
 </style>
 
 </head>
 <body>
-	<header id="titlescreen">Joni's Chatparadies </header>
-	<aside id="navbar">Page-Controls</aside>
-	<main id="mainpage">Main Content</main>
+  <header id="titlescreen">Joni's Chatparadies </header> 
+     <aside id="navbar">Page-Controls</aside>
+	<main id="mainpage"></main>
 
 </body>
 
@@ -110,7 +132,7 @@ width:150px;
 
 	function login() {
 
-		document.getElementById("mainpage").innerHTML = "";
+		
 
 		var login = ('<form class="loginUI"><input type="text" class="form-control" id="login" placeholder="Nutzername"></input>')
 		login += ('<button type="button" id="loginButton" class="btn btn-primary">Login</button></form>')
@@ -154,9 +176,38 @@ width:150px;
 					url : "http://localhost:3000/user/" + currentUser,
 					method : "GET",
 					success : function(data, status) {
-						var contactedUsers = data;
-						console.log(contactedUsers)
-						for (var i = 0; i < contactedUsers.length; i++) {
+						console.log(data)
+						var contactedUsers = (data);
+						console.log(contactedUsers.Ludolf)
+					//	console.log(contactedUsers["Ludolf"])
+				
+						console.log("hmtl: "+Object.keys(contactedUsers))
+						
+						var contactedUserNames = Object.keys(contactedUsers);
+						for(var i = 0; i < contactedUserNames.length; i++){
+							
+							
+							var contactedUserUi = ('<div id="'+contactedUserNames[i]+'" class="users" >'
+									+ contactedUserNames[i] + '</div>');
+							$(contactedUserUi).css('top', "" + top + "px");
+							$("main").append(contactedUserUi);
+							var readcount = ('<div id="readCount">Ungelesene Nachrichten: '+contactedUsers[contactedUserNames[i]]+'</div>');
+							$(contactedUserUi).css('top', "" + top + "px");
+							$("main").append(readcount)
+
+							document
+									.getElementById("" + contactedUserNames[i] + "")
+									.setAttribute(
+											"onclick",'showTitleFromMessages("' + currentUser+ '",' + '"'+ contactedUserNames[i] + '")');
+
+							top = top + 90;
+							
+							
+						}
+						
+						/*for (var i = 0; i < contactedUsers.length; i++) {
+							console.log(contactedUsers[i]+" test")
+							console.log
 							var contactedUserUi = $('<div id="'+contactedUsers[i]+'" class="users" >'
 									+ contactedUsers[i] + '</div>');
 							$(contactedUserUi).css('top', "" + top + "px");
@@ -172,8 +223,10 @@ width:150px;
 
 							top = top + 60;
 						}
+						*/
 					}
 				})
+				
 
 	}
 
@@ -198,19 +251,25 @@ width:150px;
 							console.log(allUsers)
 
 							for (var j = 0; j < allUsers.length; j++) {
-								var userUi = $('<div id="'+allUsers[j]+'" class="users" >'
-										+ allUsers[j] + '</div>');
-								$(userUi).css('top', "" + top + "px");
-								$("main").append(userUi);
-								document.getElementById("" + allUsers[j] + "")
-										.setAttribute(
-												//------>
-												"onclick",
-												'newMessage("' + currentUser
-														+ '",' + '"'
-														+ allUsers[j] + '")');
+								if (currentUser !== allUsers[j]) {
 
-								top = top + 60;
+									var userUi = $('<div id="'+allUsers[j]+'" class="users" >'
+											+ allUsers[j] + '</div>');
+									$(userUi).css('top', "" + top + "px");
+									$("main").append(userUi);
+									document.getElementById(
+											"" + allUsers[j] + "")
+											.setAttribute(
+													//------>
+													"onclick",
+													'newMessage("'
+															+ currentUser
+															+ '",' + '"'
+															+ allUsers[j]
+															+ '")');
+
+									top = top + 60;
+								}
 							}
 						}
 					}
@@ -270,6 +329,62 @@ width:150px;
 
 		})
 
+	}
+	
+	function showTitleFromMessages(currentUser, selectedUser){
+		
+		document.getElementById("mainpage").innerHTML = "";
+
+		var top = 20;
+
+		var num = 1;
+		$
+				.ajax({
+					url : "http://localhost:3000/user/" + currentUser + "/"
+							+ selectedUser,
+					method : "GET",
+					success : function(data, status) {
+						var messages = data;
+						console.log(messages);
+						for (var i = 0; i < messages.length; i++) {
+
+							console.log(messages[i]["content"])
+
+							var messageTitle = $('<span class="message"><div id="'+messages[i]["messagetitle"]+'">Titel der Nachricht: '+ messages[i]["messagetitle"]+ '</div></span>');
+							
+						
+
+							$(messageTitle).css('top', "" + top + "px");
+							$(messageTitle).css('height', "30px");
+							$(messageTitle).css('width', "300px");
+							$("main").append(messageTitle);
+							top = top + 100;
+var currentTitle = document.getElementById(""+messages[i]["messagetitle"]);
+if(messages[i]["wasread"] === false){
+	$(messageTitle).css("background-color","red");
+	console.log(messages[i])
+	var message = JSON.stringify(messages[i])
+	console.log(message)
+	currentTitle.setAttribute("onclick",'messageRead("'+currentUser+'")');
+} else{
+console.log(currentTitle)
+currentTitle.setAttribute("onclick",'showContact("' + currentUser+ '",' + '"'+ selectedUser + '")');
+							num++;
+						}
+
+					}
+					}
+
+				})
+		
+	}
+	
+	function messageRead( message){
+		//message = JSON.parse(message)
+		console.log(message)
+		//message["wasread"] = true;
+		console.log("hat funktioniert")
+		//showContact(currentUser, selectedUser);
 	}
 
 	function showContact(currentUser, selectedUser) {

@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(express.static(__dirname + '/static'));
 app.use(cors());
 
-var userData = [{
+var userData = {
 
 	"Testperson1":{
 		"name":"Testperson1",
@@ -69,7 +69,7 @@ var userData = [{
              {
 				"messagetitle":"message2",
 				"content":"Second Lorem Ipsum dolor",
-				"wasread":true,
+				"wasread":false,
 				"date": new Date()
 				}
 			
@@ -86,7 +86,7 @@ var userData = [{
 		
 	
 	
-}]
+}
 
 
 app.listen(3000);
@@ -102,8 +102,10 @@ res.status(200).send(selectedusers);
 
 app.get("/user/:name", function(req, res){
 	var currentUser = req.params.name;
-	var messagedUsers = showContactedUsers(currentUser);
+	var messagedUsers = (showContactedUsers(currentUser));
 	res.contentType = "application/json";
+	console.log("get function: "+messagedUsers)
+	console.log("get get: "+Object.keys(messagedUsers))
 	res.status(200).send(messagedUsers);
 })
 
@@ -131,11 +133,11 @@ app.post("/message/:absender/:empfaenger", function(req, res){
 function postNewMessage(absender, receiver, message){
 	
 	
-	if(userData[0][receiver]["chats"][absender] == undefined){
-		userData[0][receiver]["chats"][absender] = []
+	if(userData[receiver]["chats"][absender] == undefined){
+		userData[receiver]["chats"][absender] = []
 	}
 	
-	userData[0][receiver]["chats"][absender].push(message);
+	userData[receiver]["chats"][absender].push(message);
 	
 	console.log("Absender: "+absender)
 	console.log("Empfänger: "+receiver),
@@ -148,65 +150,41 @@ function showMessages(username, searchname){
 	
 	console.log(username);
 	
-	var contactedUsers = [];
-	
-	
-	
-	for(var i = 0; i < userData.length; i++){
-	
-	
-		var Data = userData[i][username];
 
-
-			for(var j = 0; j <Data["chats"][searchname].length; j++){
-		
-				
-					contactedUsers.push(Data["chats"][searchname][j]);
-				
-		
-		
-		}
-	}
-	return contactedUsers;
+	
+	return userData[username]["chats"][searchname];
 }
 
 
 function showContactedUsers(username){
-	var messagedUsers = [];
-	for(var i = 0; i < userData.length; i++){
+
+	var contactedUser = {};
+	var notRead = 0;
+	
+			var chatpartner = Object.keys(userData[username]["chats"]);
 		
-		var Data = userData[i][username];
-		
+	for (var i = 0; i < chatpartner.length; i++){
+		//console.log(chatpartner[0])
+		notRead = 0;
+		for(var j = 0; j < userData[username]["chats"][chatpartner[i]].length; j++){
 	
 		
-		var names = Object.keys(Data["chats"])
-		console.log(names)
-		
-		for(var j = 0; j < names.length; j++){
-			
-		
-			messagedUsers.push(names[j]);
+		//console.log(Object.keys(userData[username]["chats"]))
+		if(userData[username]["chats"][chatpartner[i]][j]["wasread"] === false){
+			notRead++;
 		}
-		
-		
-			
-		
 	}
-	return messagedUsers;
+		contactedUser[chatpartner[i]] = notRead; 
+		console.log(Object.keys(contactedUser))
+	}
+	console.log(Object.keys(contactedUser)+" 178");
+//	return Object.keys(userData[username]["chats"]);
+	
+	return contactedUser;
 }
 
 function showAllUsers(){
 	
-var Users = [];
+return Object.keys(userData);
 	
-	for(var i = 0; i < userData.length; i++){
-		console.log(userData[i]);
-		
-			var createdUser = (Object.keys(userData[i]))
-			console.log(createdUser)
-			Users.push(createdUser);
-			
-		
-	}
-	return Users;
 }
